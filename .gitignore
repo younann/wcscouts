@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+
+# build output
+.next/
+.turbo/
+out/
+
+# environment
+.env*
+!.env.local.example
+
+# next types / incremental
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# vercel
+.vercel
+
+# OS / editor
+.DS_Store
+*.log
+*.swp
+.idea/
+.vscode/
+
+# external tool dirs that crept into this workspace
+.a5c/
+.claude/
+
+# test / browser artifacts
+.playwright-mcp/
+*.png.tmp
+/test-*.png

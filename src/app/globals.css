@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Georgia', 'Cambria', 'Times New Roman', serif;
+  color-scheme: dark;
+}
+
+html { -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  color: #f6efe1;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(122, 69, 200, 0.35) 0%, transparent 65%),
+    radial-gradient(circle at 0% 100%, rgba(245,181,10,0.08) 0%, transparent 45%),
+    radial-gradient(circle at 100% 75%, rgba(122, 69, 200, 0.14) 0%, transparent 55%),
+    linear-gradient(180deg, #1d0a45 0%, #0b031c 100%);
+  background-attachment: fixed;
+}
+
+[dir="rtl"] body { font-family: var(--font-sans); }
+
+button, [role="button"] { touch-action: manipulation; }
+
+/* Card variants — refined for richer purple */
+.card-royal {
+  background: linear-gradient(135deg, rgba(122, 69, 200, 0.20) 0%, rgba(38, 15, 86, 0.60) 100%);
+  border: 1px solid rgba(148, 98, 221, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(22, 8, 51, 0.65);
+  backdrop-filter: blur(10px);
+  border-radius: 1.75rem;
+  padding: 1.25rem;
+}
+.card-royal-elev {
+  background: linear-gradient(135deg, rgba(122, 69, 200, 0.30) 0%, rgba(38, 15, 86, 0.78) 100%);
+  border: 1px solid rgba(176, 131, 240, 0.35);
+  box-shadow: 0 14px 36px -10px rgba(22, 8, 51, 0.70);
+  backdrop-filter: blur(10px);
+  border-radius: 1.75rem;
+  padding: 1.25rem;
+}
+.card-glass {
+  background: rgba(22, 8, 51, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 40px -10px rgba(22, 8, 51, 0.70);
+  backdrop-filter: blur(12px);
+  border-radius: 1.75rem;
+  padding: 1.25rem;
+}
+
+/* Buttons */
+.btn-gold {
+  background: linear-gradient(135deg, #fdda59 0%, #f5b50a 50%, #cf9100 100%);
+  color: #160833;
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 48px;
+  box-shadow: 0 10px 30px -6px rgba(245, 181, 10, 0.50);
+  transition: transform .15s ease;
+  user-select: none;
+}
+.btn-gold:active { transform: scale(0.98); }
+
+.btn-royal {
+  background: rgba(72, 31, 149, 0.85);
+  color: #ffffff;
+  border: 1px solid rgba(176, 131, 240, 0.35);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 48px;
+  box-shadow: 0 10px 30px -10px rgba(22, 8, 51, 0.6);
+  transition: transform .15s ease;
+}
+.btn-royal:active { transform: scale(0.98); }
+
+.btn-ghost-light {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  border-radius: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  color: rgba(246, 239, 225, 0.8);
+  transition: background-color .15s ease, color .15s ease;
+}
+.btn-ghost-light:hover { color: #fdd34c; background: rgba(255,255,255,0.05); }
+
+/* Chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.chip-gold {
+  background: linear-gradient(135deg, #fdd34c 0%, #f5b50a 100%);
+  color: #1c0743;
+}
+.chip-royal {
+  background: rgba(74, 30, 150, 0.6);
+  color: #f6efe1;
+  border: 1px solid rgba(183, 148, 244, 0.30);
+}
+
+/* Score stepper */
+.stepper-btn {
+  height: 3rem; width: 3rem;
+  border-radius: 1rem;
+  color: #ffffff;
+  font-size: 1.5rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .1s ease;
+  background: linear-gradient(135deg, rgba(245,181,10,0.25), rgba(245,181,10,0.05));
+  border: 1px solid rgba(252, 192, 40, 0.35);
+}
+.stepper-btn:active { transform: scale(0.9); }
+.stepper-val {
+  font-size: 3rem; font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  width: 4rem; text-align: center;
+  color: #fdd34c;
+  text-shadow: 0 0 18px rgba(252,192,40,0.45);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 6rem; left: 50%; transform: translateX(-50%);
+  z-index: 50;
+  color: #1c0743;
+  padding: 0.75rem 1.25rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fdd34c, #f5b50a);
+  box-shadow: 0 10px 30px -6px rgba(245, 181, 10, 0.5);
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Bottom nav offset */
+.with-bottom-nav { padding-bottom: 92px; }
+
+/* Stadium gradient utility */
+.bg-stadium {
+  background:
+    radial-gradient(ellipse 60% 35% at 50% 100%, rgba(252,192,40,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 18% at 20% 8%, rgba(255,255,255,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 18% at 80% 8%, rgba(255,255,255,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse at center, #5d2eb1 0%, #2d1068 60%, #1c0743 100%);
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #fff4cf 0%, #fcc028 50%, #d39400 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Confetti */
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 14px;
+  background: #fcc028;
+  border-radius: 2px;
+  opacity: 0;
+  top: -10vh;
+  animation: confetti 7s linear infinite;
+}
+
+/* Soccer ball (CSS-drawn) */
+.soccer-ball {
+  width: 80px; height: 80px;
+  background:
+    radial-gradient(circle at 30% 30%, #ffffff 0%, #ffffff 25%, #d4d4d4 65%, #6b6b6b 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35), inset -8px -10px 20px rgba(0,0,0,0.35);
+}
+.soccer-ball::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 28%, #111 0 7%, transparent 8%),
+    radial-gradient(circle at 22% 60%, #111 0 6%, transparent 7%),
+    radial-gradient(circle at 78% 60%, #111 0 6%, transparent 7%),
+    radial-gradient(circle at 50% 82%, #111 0 6%, transparent 7%);
+}
+
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], select, textarea {
+  font-family: inherit;
+}
+
+/* Keyframes also defined in tailwind config; duplicate here ensures CSS-only utilities work too. */
+@keyframes popIn {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.85); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+}
