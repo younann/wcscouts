@@ -31,14 +31,24 @@ export default async function HomePage() {
     .maybeSingle();
   const rank = (rankRow as LeaderboardEntry | null)?.position ?? null;
 
-  const { data: matchesRaw } = await supabase
-    .from('matches')
-    .select('*')
-    .gt('kickoff_at', new Date().toISOString())
-    .order('kickoff_at', { ascending: true })
-    .limit(3);
+  const [{ data: upcomingRaw }, { data: recentRaw }] = await Promise.all([
+    supabase
+      .from('matches')
+      .select('*')
+      .gt('kickoff_at', new Date().toISOString())
+      .order('kickoff_at', { ascending: true })
+      .limit(3),
+    supabase
+      .from('matches')
+      .select('*')
+      .eq('status', 'finished')
+      .order('scored_at', { ascending: false })
+      .limit(3),
+  ]);
 
-  const matches = (matchesRaw ?? []) as MatchWithTeams[];
+  const upcoming = (upcomingRaw ?? []) as MatchWithTeams[];
+  const recent = (recentRaw ?? []) as MatchWithTeams[];
+  const matches = [...upcoming, ...recent];
 
   const codes = Array.from(
     new Set(matches.flatMap((m) => [m.home_team, m.away_team]).filter((c): c is string => !!c))
@@ -59,11 +69,14 @@ export default async function HomePage() {
     (myPreds ?? []).map((p) => [(p as Prediction).match_id, p as Prediction])
   );
 
-  const enriched: MatchWithTeams[] = matches.map((m) => ({
-    ...m,
-    home: m.home_team ? teamsByCode.get(m.home_team) ?? null : null,
-    away: m.away_team ? teamsByCode.get(m.away_team) ?? null : null,
-  }));
+  const enrich = (rows: MatchWithTeams[]): MatchWithTeams[] =>
+    rows.map((m) => ({
+      ...m,
+      home: m.home_team ? teamsByCode.get(m.home_team) ?? null : null,
+      away: m.away_team ? teamsByCode.get(m.away_team) ?? null : null,
+    }));
+  const enrichedUpcoming = enrich(upcoming);
+  const enrichedRecent = enrich(recent);
 
   return (
     <main className="px-5 pb-6 flex flex-col gap-5">
@@ -117,6 +130,29 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {enrichedRecent.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-black text-cream">{t.home.recentResults}</h2>
+            <Link href="/matches?tab=done" className="btn-ghost-light text-sm">
+              {t.home.seeAll}
+              <Chevron className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-3">
+            {enrichedRecent.map((m) => (
+              <MatchCard
+                key={m.id}
+                match={m}
+                prediction={predByMatch.get(m.id) ?? null}
+                locale={locale}
+                t={t}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-black text-cream">{t.home.nextMatches}</h2>
@@ -125,11 +161,11 @@ export default async function HomePage() {
             <Chevron className="h-4 w-4" />
           </Link>
         </div>
-        {enriched.length === 0 ? (
+        {enrichedUpcoming.length === 0 ? (
           <div className="card-royal text-center text-cream/60">{t.home.noMatches}</div>
         ) : (
           <div className="flex flex-col gap-3">
-            {enriched.map((m) => (
+            {enrichedUpcoming.map((m) => (
               <MatchCard
                 key={m.id}
                 match={m}

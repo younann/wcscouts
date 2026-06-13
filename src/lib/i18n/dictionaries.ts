@@ -11,6 +11,7 @@ type Dict = {
   home: {
     welcome: string; yourPoints: string; yourRank: string;
     nextMatches: string; noMatches: string; predictNow: string; seeAll: string;
+    recentResults: string; noResults: string;
   };
   match: {
     kickoffIn: string; closed: string; live: string; finished: string;
@@ -22,7 +23,13 @@ type Dict = {
   };
   leaderboard: { title: string; empty: string; pts: string; first: string; second: string; third: string };
   profile: { title: string; group: string; points: string; myPredictions: string; changeLanguage: string };
-  predictions: { title: string; empty: string; pending: string; points: string };
+  predictions: {
+    title: string; empty: string; pending: string; points: string;
+    statsTotal: string; statsScored: string; statsExact: string; statsCorrect: string;
+    statsPoints: string;
+    you: string; result: string; perfect: string; close: string; outcome: string; miss: string;
+    allScoutsTitle: string;
+  };
   admin: {
     title: string; dashboard: string; matches: string; users: string; scoring: string;
     export: string; winners: string; enterResult: string; scoreMatch: string;
@@ -84,6 +91,8 @@ const en: Dict = {
       noMatches: 'No upcoming matches',
       predictNow: 'Predict now',
       seeAll: 'See all',
+      recentResults: 'Recent results',
+      noResults: 'No results yet',
     },
     match: {
       kickoffIn: 'Kicks off in',
@@ -128,6 +137,18 @@ const en: Dict = {
       empty: 'You have not made any predictions yet',
       pending: 'Pending result',
       points: 'points',
+      statsTotal: 'Predictions',
+      statsScored: 'Scored',
+      statsExact: 'Exact',
+      statsCorrect: 'Correct',
+      statsPoints: 'Points',
+      you: 'You',
+      result: 'Result',
+      perfect: 'Exact',
+      close: 'Close',
+      outcome: 'Outcome',
+      miss: 'Miss',
+      allScoutsTitle: 'All scouts',
     },
     admin: {
       title: 'Admin',
@@ -205,6 +226,8 @@ const ar: Dict = {
       noMatches: 'لا توجد مباريات قادمة',
       predictNow: 'توقّع الآن',
       seeAll: 'عرض الكل',
+      recentResults: 'النتائج الأخيرة',
+      noResults: 'لا توجد نتائج بعد',
     },
     match: {
       kickoffIn: 'تبدأ خلال',
@@ -249,6 +272,18 @@ const ar: Dict = {
       empty: 'لم تسجّل أي توقّع بعد',
       pending: 'بانتظار النتيجة',
       points: 'نقطة',
+      statsTotal: 'التوقّعات',
+      statsScored: 'احتُسبت',
+      statsExact: 'تامّة',
+      statsCorrect: 'صحيحة',
+      statsPoints: 'النقاط',
+      you: 'أنت',
+      result: 'النتيجة',
+      perfect: 'تامّة',
+      close: 'قريب',
+      outcome: 'النتيجة',
+      miss: 'خاطئ',
+      allScoutsTitle: 'كل الكشّافة',
     },
     admin: {
       title: 'لوحة المسؤول',
