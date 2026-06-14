@@ -38,3 +38,21 @@ export function timeUntil(iso: string, locale: 'en' | 'ar' = 'en'): string {
 export function isLocked(kickoffIso: string): boolean {
   return new Date(kickoffIso).getTime() <= Date.now();
 }
+
+interface RelativeTimeStrings {
+  relativeJustNow: string;
+  relativeMinutes: string;
+  relativeHours: string;
+  relativeDays: string;
+}
+
+export function formatRelativeTime(iso: string, t: RelativeTimeStrings): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  if (diffMs < 60_000) return t.relativeJustNow;
+  const min = Math.floor(diffMs / 60_000);
+  if (min < 60) return t.relativeMinutes.replace('{n}', String(min));
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return t.relativeHours.replace('{n}', String(hr));
+  const days = Math.floor(hr / 24);
+  return t.relativeDays.replace('{n}', String(days));
+}

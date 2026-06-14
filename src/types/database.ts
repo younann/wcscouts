@@ -68,3 +68,61 @@ export interface LeaderboardEntry {
   winner_place: 1 | 2 | 3 | null;
   position: number;
 }
+
+export const REACTION_EMOJIS = ['🔥', '⚽', '😂', '👏', '😍', '😱', '🎯'] as const;
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number];
+
+export interface Post {
+  id: number;
+  user_id: string;
+  body: string;
+  match_id: number | null;
+  created_at: string;
+}
+
+export interface PostReaction {
+  post_id: number;
+  user_id: string;
+  emoji: ReactionEmoji;
+}
+
+export interface PostComment {
+  id: number;
+  post_id: number;
+  user_id: string;
+  body: string;
+  created_at: string;
+}
+
+export interface PostMatchChip {
+  id: number;
+  home_team: string | null;
+  away_team: string | null;
+  home_flag: string | null;
+  away_flag: string | null;
+  kickoff_at: string;
+}
+
+export interface PostListItem {
+  id: number;
+  user_id: string;
+  username: string;
+  full_name: string;
+  body: string;
+  match_id: number | null;
+  match: PostMatchChip | null;
+  created_at: string;
+  reactions: Partial<Record<ReactionEmoji, number>>;
+  my_reaction: ReactionEmoji | null;
+  comment_count: number;
+}
+
+export interface PostCommentListItem {
+  id: number;
+  post_id: number;
+  user_id: string;
+  username: string;
+  full_name: string;
+  body: string;
+  created_at: string;
+}

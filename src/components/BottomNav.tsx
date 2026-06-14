@@ -2,18 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, CalendarDays, Trophy, User } from 'lucide-react';
+import { Home, CalendarDays, MessageSquare, Trophy, User, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+type NavKey = 'home' | 'matches' | 'feed' | 'leaderboard' | 'profile';
+
 interface Props {
-  labels: { home: string; matches: string; leaderboard: string; profile: string };
+  labels: Record<NavKey, string>;
 }
 
-const items = [
-  { href: '/home', icon: Home, key: 'home' as const },
-  { href: '/matches', icon: CalendarDays, key: 'matches' as const },
-  { href: '/leaderboard', icon: Trophy, key: 'leaderboard' as const },
-  { href: '/profile', icon: User, key: 'profile' as const },
+const items: { href: string; icon: LucideIcon; key: NavKey }[] = [
+  { href: '/home', icon: Home, key: 'home' },
+  { href: '/matches', icon: CalendarDays, key: 'matches' },
+  { href: '/feed', icon: MessageSquare, key: 'feed' },
+  { href: '/leaderboard', icon: Trophy, key: 'leaderboard' },
+  { href: '/profile', icon: User, key: 'profile' },
 ];
 
 export function BottomNav({ labels }: Props) {
@@ -21,7 +24,7 @@ export function BottomNav({ labels }: Props) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 mx-auto max-w-md">
       <div className="m-3 rounded-3xl bg-royal-950/85 backdrop-blur-md border border-gold-500/25 shadow-royal">
-        <ul className="grid grid-cols-4">
+        <ul className="grid grid-cols-5">
           {items.map(({ href, icon: Icon, key }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
             return (
@@ -29,7 +32,7 @@ export function BottomNav({ labels }: Props) {
                 <Link
                   href={href}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-1 py-3 transition',
+                    'flex flex-col items-center justify-center gap-1 py-3 px-1 transition',
                     active ? 'text-gold-300' : 'text-cream/50'
                   )}
                 >

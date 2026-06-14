@@ -2,7 +2,7 @@ export type Locale = 'en' | 'ar';
 
 type Dict = {
   app: { name: string; tagline: string };
-  nav: { home: string; matches: string; leaderboard: string; profile: string };
+  nav: { home: string; matches: string; leaderboard: string; profile: string; feed: string };
   auth: {
     login: string; logout: string; username: string; email: string; password: string;
     loginButton: string; welcomeBack: string; enterCredentials: string;
@@ -41,6 +41,38 @@ type Dict = {
     createUser: string; resetPassword: string; markWinners: string;
   };
   common: { save: string; cancel: string; loading: string; error: string; back: string };
+  feed: {
+    title: string;
+    composerPlaceholder: string;
+    composerCounter: string;
+    tagMatch: string;
+    removeTag: string;
+    noMatchTagged: string;
+    postButton: string;
+    posting: string;
+    reactAria: string;
+    commentsCount: string;
+    commentPlaceholder: string;
+    sendComment: string;
+    emptyTitle: string;
+    emptyBody: string;
+    newPostsBanner: string;
+    loadMore: string;
+    loadingMore: string;
+    deleteConfirmTitle: string;
+    deleteConfirmBody: string;
+    deletePost: string;
+    deleteComment: string;
+    deleteButton: string;
+    postError: string;
+    actionFailed: string;
+    rateLimited: string;
+    matchChipAria: string;
+    relativeJustNow: string;
+    relativeMinutes: string;
+    relativeHours: string;
+    relativeDays: string;
+  };
   landing: {
     badge: string;
     motto1: string;
@@ -75,6 +107,7 @@ const en: Dict = {
       matches: 'Matches',
       leaderboard: 'Leaderboard',
       profile: 'Profile',
+      feed: 'Feed',
     },
     auth: {
       login: 'Log in',
@@ -188,6 +221,38 @@ const en: Dict = {
       error: 'Something went wrong',
       back: 'Back',
     },
+    feed: {
+      title: 'Feed',
+      composerPlaceholder: 'Share something with the scouts…',
+      composerCounter: '{n} / 280',
+      tagMatch: 'Tag a match',
+      removeTag: 'Remove tag',
+      noMatchTagged: 'No match',
+      postButton: 'Post',
+      posting: 'Posting…',
+      reactAria: 'React with {emoji}',
+      commentsCount: '{n} comments',
+      commentPlaceholder: 'Reply…',
+      sendComment: 'Send',
+      emptyTitle: 'Be the first to post 🏆',
+      emptyBody: 'Share a reaction after the next match.',
+      newPostsBanner: '{n} new posts ↑',
+      loadMore: 'Load more',
+      loadingMore: 'Loading…',
+      deleteConfirmTitle: 'Delete this?',
+      deleteConfirmBody: 'This cannot be undone.',
+      deletePost: 'Delete post',
+      deleteComment: 'Delete comment',
+      deleteButton: 'Delete',
+      postError: 'Could not post. Try again.',
+      actionFailed: 'Something went wrong.',
+      rateLimited: 'Slow down — try again in a minute.',
+      matchChipAria: 'Tagged match',
+      relativeJustNow: 'just now',
+      relativeMinutes: '{n}m',
+      relativeHours: '{n}h',
+      relativeDays: '{n}d',
+    },
     landing: {
       badge: 'World Cup 2026',
       motto1: 'Scouts of today…',
@@ -222,6 +287,7 @@ const ar: Dict = {
       matches: 'المباريات',
       leaderboard: 'الترتيب',
       profile: 'حسابي',
+      feed: 'الموجز',
     },
     auth: {
       login: 'تسجيل الدخول',
@@ -334,6 +400,38 @@ const ar: Dict = {
       loading: 'جارٍ التحميل…',
       error: 'حدث خطأ ما',
       back: 'رجوع',
+    },
+    feed: {
+      title: 'الموجز',
+      composerPlaceholder: 'شاركنا شيئًا مع الكشّافة…',
+      composerCounter: '{n} / 280',
+      tagMatch: 'ربط بمباراة',
+      removeTag: 'إزالة الربط',
+      noMatchTagged: 'بدون مباراة',
+      postButton: 'نشر',
+      posting: 'جارٍ النشر…',
+      reactAria: 'تفاعل بـ {emoji}',
+      commentsCount: '{n} تعليق',
+      commentPlaceholder: 'ردّك…',
+      sendComment: 'إرسال',
+      emptyTitle: 'كن أول من ينشر 🏆',
+      emptyBody: 'شاركنا انطباعك بعد المباراة القادمة.',
+      newPostsBanner: '{n} منشورات جديدة ↑',
+      loadMore: 'عرض المزيد',
+      loadingMore: 'جارٍ التحميل…',
+      deleteConfirmTitle: 'حذف هذا؟',
+      deleteConfirmBody: 'لا يمكن التراجع عن هذا الإجراء.',
+      deletePost: 'حذف المنشور',
+      deleteComment: 'حذف التعليق',
+      deleteButton: 'حذف',
+      postError: 'تعذّر النشر. حاول مجدّدًا.',
+      actionFailed: 'حدث خطأ ما.',
+      rateLimited: 'تمهّل قليلًا — حاول بعد دقيقة.',
+      matchChipAria: 'مباراة مرتبطة',
+      relativeJustNow: 'الآن',
+      relativeMinutes: '{n} د',
+      relativeHours: '{n} س',
+      relativeDays: '{n} ي',
     },
     landing: {
       badge: 'كأس العالم 2026',
