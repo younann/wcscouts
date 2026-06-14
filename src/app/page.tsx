@@ -34,9 +34,12 @@ export default async function LandingPage() {
 
       {/* CTA + language switcher, below the artwork — out of the way of baked-in elements */}
       <section className="relative z-10 px-5 -mt-6 pb-8 flex flex-col gap-3">
-        <Link href="/login" className="btn-gold w-full text-base">
+        <Link href="/signup" className="btn-gold w-full text-base">
           <Trophy className="h-5 w-5" />
           {t.landing.cta}
+        </Link>
+        <Link href="/login" className="btn-royal w-full text-sm">
+          {t.auth.haveAccount} {t.auth.login}
         </Link>
         <div className="flex items-center justify-center">
           <LanguageSwitcher current={locale} />

@@ -7,6 +7,11 @@ type Dict = {
     login: string; logout: string; username: string; email: string; password: string;
     loginButton: string; welcomeBack: string; enterCredentials: string;
     forgotPassword: string; loginError: string;
+    signupTitle: string; signupSub: string; signupButton: string;
+    noAccount: string; haveAccount: string;
+    fullName: string; group: string; groupOptional: string;
+    usernameRule: string; passwordRule: string;
+    usernameTaken: string; signupError: string;
   };
   home: {
     welcome: string; yourPoints: string; yourRank: string;
@@ -82,6 +87,18 @@ const en: Dict = {
       enterCredentials: 'Sign in to predict the next matches',
       forgotPassword: 'Forgot password? Contact your admin.',
       loginError: 'Wrong username or password',
+      signupTitle: 'Join the scouts',
+      signupSub: 'Pick a username and password',
+      signupButton: 'Create my account',
+      noAccount: "Don't have an account?",
+      haveAccount: 'Already a scout?',
+      fullName: 'Full name',
+      group: 'Group',
+      groupOptional: 'Group (optional)',
+      usernameRule: '3–20 chars, lowercase letters, numbers, . _ -',
+      passwordRule: 'At least 6 characters',
+      usernameTaken: 'That username is already taken',
+      signupError: 'Could not create your account',
     },
     home: {
       welcome: 'Hi',
@@ -217,6 +234,18 @@ const ar: Dict = {
       enterCredentials: 'سجّل دخولك لتوقّع المباريات القادمة',
       forgotPassword: 'نسيت كلمة المرور؟ تواصل مع المسؤول.',
       loginError: 'اسم المستخدم أو كلمة المرور غير صحيحة',
+      signupTitle: 'انضمّ إلى الكشّافة',
+      signupSub: 'اختر اسم مستخدم وكلمة مرور',
+      signupButton: 'إنشاء حسابي',
+      noAccount: 'ليس لديك حساب؟',
+      haveAccount: 'لديك حساب بالفعل؟',
+      fullName: 'الاسم الكامل',
+      group: 'المجموعة',
+      groupOptional: 'المجموعة (اختياري)',
+      usernameRule: '٣–٢٠ حرفًا، حروف صغيرة وأرقام و . _ -',
+      passwordRule: '٦ أحرف على الأقل',
+      usernameTaken: 'اسم المستخدم مستخدم بالفعل',
+      signupError: 'تعذّر إنشاء حسابك',
     },
     home: {
       welcome: 'مرحبًا',

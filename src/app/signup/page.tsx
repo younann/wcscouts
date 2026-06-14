@@ -1,17 +1,16 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { LoginForm } from './LoginForm';
+import { SignupForm } from './SignupForm';
 import { getT } from '@/lib/i18n/server';
 import { isRTL } from '@/lib/i18n/dictionaries';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Confetti } from '@/components/Confetti';
 import { ScoutLogo } from '@/components/ScoutLogo';
 
-export default async function LoginPage() {
+export default async function SignupPage() {
   const { locale, t } = await getT();
-  const rtl = isRTL(locale);
-  const Back = rtl ? ChevronRight : ChevronLeft;
+  const Back = isRTL(locale) ? ChevronRight : ChevronLeft;
 
   return (
     <main className="mx-auto max-w-md min-h-dvh px-5 pt-5 pb-8 flex flex-col relative overflow-hidden">
@@ -26,7 +25,7 @@ export default async function LoginPage() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center mb-4">
-        <ScoutLogo size={96} glow alt={t.landing.scoutsName} />
+        <ScoutLogo size={88} glow alt={t.landing.scoutsName} />
         <div className="text-xs text-gold-300 mt-3 font-semibold tracking-wide">
           {t.landing.badge}
         </div>
@@ -35,19 +34,18 @@ export default async function LoginPage() {
 
       <div className="card-glass relative z-10 flex-1 flex flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-black text-cream">{t.auth.welcomeBack}</h1>
-          <p className="text-sm text-cream/70 mt-1">{t.auth.enterCredentials}</p>
+          <h1 className="text-2xl font-black text-cream">{t.auth.signupTitle}</h1>
+          <p className="text-sm text-cream/70 mt-1">{t.auth.signupSub}</p>
         </div>
         <Suspense fallback={<div className="text-sm text-cream/60">{t.common.loading}</div>}>
-          <LoginForm t={t} />
+          <SignupForm t={t} />
         </Suspense>
-        <p className="text-xs text-cream/70 text-center">
-          {t.auth.noAccount}{' '}
-          <Link href="/signup" className="text-gold-300 font-semibold">
-            {t.auth.signupButton}
+        <p className="text-xs text-cream/55 text-center">
+          {t.auth.haveAccount}{' '}
+          <Link href="/login" className="text-gold-300 font-semibold">
+            {t.auth.login}
           </Link>
         </p>
-        <p className="text-xs text-cream/55 text-center mt-auto">{t.auth.forgotPassword}</p>
       </div>
     </main>
   );
