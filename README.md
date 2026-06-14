@@ -42,16 +42,18 @@ In Supabase, open **SQL Editor** and run, in order:
 2. `supabase/migrations/002_rls.sql` — Row-Level Security policies
 3. `supabase/migrations/003_functions.sql` — `score_match` + `leaderboard` view
 4. `supabase/migrations/004_seed_teams.sql` — 48 WC 2026 teams (EN + AR)
-5. `supabase/migrations/005_seed_matches.sql` — group stage fixture skeleton
+5. `supabase/migrations/005_seed_matches.sql` — group stage fixtures (72 matches)
 6. `supabase/migrations/006_team_aliases.sql` — TheSportsDB name → team-code map (for auto-sync)
-7. `supabase/migrations/007_sync_function.sql` — `sync_match_results()` Postgres function
-8. `supabase/migrations/008_pg_cron.sql` — schedules the sync every 15 min
+7. `supabase/migrations/007_scoring_refactor.sql` — splits scoring into admin & internal helpers
+8. `supabase/migrations/008_sync_results_function.sql` — `sync_match_results()` reading the latest pg_net cached response
+9. `supabase/migrations/009_pg_cron.sql` — schedules the sync every 15 min
+10. `supabase/migrations/010_seed_knockouts.sql` — 32 knockout slots (teams TBD)
 
-> **Before running 008**, enable two extensions in Supabase Dashboard → Database → Extensions:
-> - `http` (synchronous HTTP from Postgres)
-> - `pg_cron` (scheduler)
+> **Before running 009**, enable two extensions in Supabase Dashboard → Database → Extensions:
+> - `pg_net` — async HTTP from Postgres (used by the sync function)
+> - `pg_cron` — scheduler
 >
-> Both are on the free tier. Then run `008_pg_cron.sql`.
+> Both are on the free tier. Then run `009_pg_cron.sql`.
 
 > The seeded fixtures are **placeholders**. Adjust them to the actual WC 2026 draw and kickoff times via **Admin → Matches** (or directly in SQL).
 
