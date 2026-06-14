@@ -23,6 +23,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'password too short' }, { status: 400 });
     }
 
+    const rawSecret = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+    console.error('[signup] secret key diagnostic:', {
+      hasSecretKey: !!process.env.SUPABASE_SECRET_KEY,
+      hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      length: rawSecret.length,
+      trimmedLength: rawSecret.trim().length,
+      prefix: rawSecret.slice(0, 12),
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    });
+
     const admin = createServiceClient();
     const email = `${username}@wcscouts.app`;
 
