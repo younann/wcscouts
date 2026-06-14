@@ -54,7 +54,7 @@ export function SignupForm({ t }: { t: Dictionary }) {
 
       // Immediately sign in after successful signup
       const supabase = createClient();
-      const email = `${u}@wcscouts.local`;
+      const email = `${u}@wcscouts.app`;
       const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
       if (signInErr) {
         // Account created but sign-in failed — send to login

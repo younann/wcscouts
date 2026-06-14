@@ -60,7 +60,7 @@ In Supabase, open **SQL Editor** and run, in order:
 ### 5. Create the admin user
 
 1. In Supabase Dashboard → **Authentication → Add user**, create your account using
-   an email like `admin@wcscouts.local` and a password of your choice.
+   an email like `admin@wcscouts.app` and a password of your choice.
 2. Open SQL Editor, edit `supabase/scripts/promote_admin.sql` with your email, and run it.
 3. You will sign into the app using just the prefix `admin` and your password.
 
@@ -78,7 +78,7 @@ Open http://localhost:3000 — you'll be redirected to `/login`.
 
 ### Users
 - Created by the admin via **Admin → Users** (no public sign-up).
-- Sign in with **username** (case-insensitive). Internally a synthetic email `<username>@wcscouts.local` is used so Supabase Auth is happy.
+- Sign in with **username** (case-insensitive). Internally a synthetic email `<username>@wcscouts.app` is used so Supabase Auth is happy.
 - Password reset is admin-driven — no email setup needed.
 
 ### Predictions

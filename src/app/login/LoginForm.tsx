@@ -22,7 +22,7 @@ export function LoginForm({ t }: { t: Dictionary }) {
       const supabase = createClient();
       const email = username.includes('@')
         ? username.trim().toLowerCase()
-        : `${username.trim().toLowerCase()}@wcscouts.local`;
+        : `${username.trim().toLowerCase()}@wcscouts.app`;
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         setError(t.auth.loginError);

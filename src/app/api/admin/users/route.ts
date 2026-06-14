@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
   const admin = createServiceClient();
   // Synthesise email from username to satisfy Supabase Auth (email required)
-  const email = `${username}@wcscouts.local`;
+  const email = `${username}@wcscouts.app`;
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email,
     password,
