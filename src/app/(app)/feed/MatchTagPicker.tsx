@@ -65,7 +65,7 @@ export function MatchTagPicker({ t, locale, matches, value, onChange }: Props) {
         {t.feed.tagMatch}
       </button>
       {open && (
-        <div className="absolute z-20 mt-2 max-h-64 w-72 overflow-y-auto rounded-2xl border border-gold-500/25 bg-royal-950/95 p-2 shadow-royal">
+        <div className="absolute z-40 mt-2 max-h-64 w-72 overflow-y-auto rounded-2xl border border-gold-500/25 bg-royal-950/95 p-2 shadow-royal">
           {matches.map((m) => (
             <button
               key={m.id}

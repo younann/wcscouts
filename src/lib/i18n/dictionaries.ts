@@ -107,7 +107,7 @@ const en: Dict = {
       matches: 'Matches',
       leaderboard: 'Leaderboard',
       profile: 'Profile',
-      feed: 'Feed',
+      feed: 'Chat',
     },
     auth: {
       login: 'Log in',
@@ -287,7 +287,7 @@ const ar: Dict = {
       matches: 'المباريات',
       leaderboard: 'الترتيب',
       profile: 'حسابي',
-      feed: 'الموجز',
+      feed: 'الدردشة',
     },
     auth: {
       login: 'تسجيل الدخول',

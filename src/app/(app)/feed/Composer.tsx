@@ -54,7 +54,7 @@ export function Composer({ t, locale, taggableMatches, onCreated, onError, onFoc
   }
 
   return (
-    <form onSubmit={submit} className="card-glass flex flex-col gap-3">
+    <form onSubmit={submit} className="card-glass flex flex-col gap-3 relative z-30">
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value.slice(0, MAX_LEN))}
