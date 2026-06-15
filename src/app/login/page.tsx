@@ -7,6 +7,7 @@ import { isRTL } from '@/lib/i18n/dictionaries';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Confetti } from '@/components/Confetti';
 import { ScoutLogo } from '@/components/ScoutLogo';
+import { Copyright } from '@/components/Copyright';
 
 export default async function LoginPage() {
   const { locale, t } = await getT();
@@ -49,6 +50,8 @@ export default async function LoginPage() {
         </p>
         <p className="text-xs text-cream/55 text-center mt-auto">{t.auth.forgotPassword}</p>
       </div>
+
+      <Copyright className="relative z-10 mt-2" />
     </main>
   );
 }

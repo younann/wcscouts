@@ -5,6 +5,7 @@ import { Trophy } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { getT } from '@/lib/i18n/server';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { Copyright } from '@/components/Copyright';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +48,7 @@ export default async function LandingPage() {
         <div className="text-center text-[11px] text-cream/55">
           {t.landing.scoutsName} · 1972
         </div>
+        <Copyright />
       </section>
     </main>
   );

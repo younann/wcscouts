@@ -7,6 +7,7 @@ import { isRTL } from '@/lib/i18n/dictionaries';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Confetti } from '@/components/Confetti';
 import { ScoutLogo } from '@/components/ScoutLogo';
+import { Copyright } from '@/components/Copyright';
 
 export default async function SignupPage() {
   const { locale, t } = await getT();
@@ -47,6 +48,8 @@ export default async function SignupPage() {
           </Link>
         </p>
       </div>
+
+      <Copyright className="relative z-10 mt-2" />
     </main>
   );
 }
