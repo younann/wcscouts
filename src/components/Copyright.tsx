@@ -20,7 +20,7 @@ export function Copyright({ className }: Props) {
         rel="noopener noreferrer"
         className="text-gold-300/70 hover:text-gold-300 font-semibold"
       >
-        DEVULTA
+        DEVULTRA
       </a>
     </div>
   );
