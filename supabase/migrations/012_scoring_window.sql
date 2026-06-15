@@ -61,7 +61,8 @@ begin
       and p.points_awarded is not null
       and m.kickoff_at >= v_start
       and m.kickoff_at <= v_end
-  ), 0);
+  ), 0)
+  where pr.id is not null;  -- Supabase rejects unqualified UPDATEs; PK is never null so this matches all rows.
 end;
 $$;
 
