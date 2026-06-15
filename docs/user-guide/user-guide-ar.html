@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<title>دليل تطبيق كشّافة المونديال</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --royal-950: #160833;
+    --royal-900: #1c0743;
+    --royal-700: #4a1e96;
+    --gold-500: #fdd34c;
+    --gold-400: #f5b50a;
+    --cream: #f6efe1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    background: var(--royal-950);
+    color: var(--cream);
+    width: 720px;
+  }
+
+  .page {
+    width: 720px;
+    padding: 40px 32px 56px;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(122, 69, 200, 0.55) 0%, transparent 45%),
+      radial-gradient(circle at 80% 100%, rgba(245, 181, 10, 0.18) 0%, transparent 50%),
+      linear-gradient(180deg, #1c0743 0%, #0e0322 100%);
+    background-attachment: local;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(252, 192, 40, 0.18);
+    margin-bottom: 32px;
+  }
+  .logo {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 25%, #4a1e96 0%, #1c0743 70%);
+    border: 3px solid rgba(252, 192, 40, 0.85);
+    box-shadow: 0 0 0 6px rgba(252,192,40,0.22), 0 0 60px rgba(252,192,40,0.45);
+    display: grid; place-items: center;
+    font-size: 50px;
+    color: var(--gold-500);
+  }
+  .badge {
+    font-size: 14px;
+    color: var(--gold-500);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .title {
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #fdd34c 0%, #f5b50a 60%, #cf9100 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: rgba(246, 239, 225, 0.7);
+    max-width: 540px;
+  }
+
+  .section {
+    background: rgba(22, 8, 51, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 28px;
+    padding: 26px 26px 24px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(252,192,40,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .num {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fdda59 0%, #f5b50a 50%, #cf9100 100%);
+    color: #160833;
+    font-weight: 900;
+    font-size: 22px;
+    display: grid; place-items: center;
+    box-shadow: 0 8px 20px -6px rgba(245,181,10,0.55);
+    flex-shrink: 0;
+  }
+  .icon {
+    font-size: 30px;
+    line-height: 1;
+  }
+  .section h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--cream);
+  }
+
+  .section p { margin: 0; font-size: 16px; line-height: 1.85; color: rgba(246,239,225,0.92); }
+  .section ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .section li {
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: rgba(246,239,225,0.92);
+    padding-inline-start: 22px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .section li::before {
+    content: '✦';
+    color: var(--gold-500);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+  }
+
+  /* Mini "screenshot" widgets baked from divs */
+  .mock {
+    margin-top: 16px;
+    border-radius: 18px;
+    padding: 14px 16px;
+    background: rgba(74, 30, 150, 0.30);
+    border: 1px solid rgba(176, 131, 240, 0.30);
+  }
+  .mock-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(176, 131, 240, 0.25);
+    font-size: 14px;
+  }
+  .mock-row:last-child { border-bottom: none; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(252,192,40,0.15);
+    border: 1px solid rgba(252,192,40,0.35);
+    color: var(--gold-500);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .stepper {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(22,8,51,0.65);
+    border: 2px solid rgba(252,192,40,0.40);
+    padding: 6px 10px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .stepper .btn {
+    display: inline-grid; place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(252,192,40,0.20);
+    color: var(--gold-500);
+    font-size: 14px;
+  }
+
+  .reactions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .reaction {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(22,8,51,0.55);
+    border: 1px solid rgba(252,192,40,0.18);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: rgba(246,239,225,0.85);
+  }
+  .reaction.active {
+    background: rgba(252,192,40,0.22);
+    border-color: rgba(252,192,40,0.60);
+    color: var(--gold-500);
+  }
+
+  .podium {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 10px;
+    align-items: end;
+    margin-top: 14px;
+    text-align: center;
+  }
+  .pod {
+    background: rgba(74,30,150,0.40);
+    border: 1px solid rgba(252,192,40,0.30);
+    border-radius: 14px;
+    padding: 10px 6px;
+    font-weight: 800;
+  }
+  .pod.gold { background: rgba(252,192,40,0.20); border-color: rgba(252,192,40,0.70); padding-bottom: 18px; padding-top: 14px; }
+  .pod.silver { background: rgba(180,180,200,0.18); border-color: rgba(180,180,200,0.45); }
+  .pod.bronze { background: rgba(184,115,51,0.20); border-color: rgba(184,115,51,0.55); }
+
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .flow-step {
+    background: rgba(22,8,51,0.55);
+    border: 1px solid rgba(252,192,40,0.20);
+    border-radius: 14px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .flow-step .e { font-size: 24px; display: block; margin-bottom: 4px; }
+
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(252, 192, 40, 0.18);
+    font-size: 13px;
+    color: rgba(246, 239, 225, 0.55);
+  }
+  .footer a { color: var(--gold-500); text-decoration: none; font-weight: 800; }
+
+  .closing {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold-500);
+    margin-top: 32px;
+    padding: 22px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(252,192,40,0.10), rgba(74,30,150,0.35));
+    border: 1px solid rgba(252,192,40,0.30);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="logo">🏆</div>
+    <div class="badge">كأس العالم 2026</div>
+    <div class="title">دليل استخدام التطبيق</div>
+    <div class="subtitle">تعرّف على كل أقسام تطبيق كشّافة المونديال خطوة بخطوة قبل أن تبدأ التوقّع والمنافسة.</div>
+  </div>
+
+  <!-- 1. Account -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">1</div>
+      <div class="icon">📝</div>
+      <h2>إنشاء حسابك أو تسجيل الدخول</h2>
+    </div>
+    <p>عند فتح التطبيق لأول مرة، اضغط على <b>«ابدأ التوقّع»</b> لإنشاء حساب جديد، أو <b>«تسجيل الدخول»</b> إذا كان لديك حساب.</p>
+    <ul>
+      <li>اختر اسم مستخدم (حروف صغيرة وأرقام، ٣–٢٠ خانة).</li>
+      <li>اكتب اسمك الكامل والمجموعة (اختياري).</li>
+      <li>اختر كلمة مرور لا تقلّ عن ٦ أحرف.</li>
+    </ul>
+    <div class="mock">
+      <div class="mock-row"><span>اسم المستخدم</span><span class="pill">scout01</span></div>
+      <div class="mock-row"><span>كلمة المرور</span><span class="pill">••••••</span></div>
+    </div>
+  </div>
+
+  <!-- 2. Home -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">2</div>
+      <div class="icon">🏠</div>
+      <h2>الشاشة الرئيسية</h2>
+    </div>
+    <p>بعد الدخول ستظهر لك أهم المعلومات في لمحة واحدة:</p>
+    <ul>
+      <li>نقاطك الحالية وترتيبك بين جميع الكشّافة.</li>
+      <li>المباريات القادمة (اضغط على أي مباراة لتسجيل توقّعك).</li>
+      <li>أحدث النتائج المُحتسبة.</li>
+    </ul>
+    <div class="mock">
+      <div class="mock-row"><span>نقاطك</span><span class="pill">٢٤ نقطة</span></div>
+      <div class="mock-row"><span>ترتيبك</span><span class="pill">#٧</span></div>
+      <div class="mock-row"><span>المباراة القادمة</span><span>🇲🇦 vs 🇫🇷 · السبت ٢١:٠٠</span></div>
+    </div>
+  </div>
+
+  <!-- 3. Matches -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">3</div>
+      <div class="icon">⚽</div>
+      <h2>المباريات والتوقّعات</h2>
+    </div>
+    <p>من تبويب «المباريات» ستجد كل المباريات مقسّمة إلى ثلاث فئات:</p>
+    <ul>
+      <li><b>قادمة</b> — متاحة للتوقّع.</li>
+      <li><b>مباشرة</b> — انطلقت بالفعل، أُغلق التوقّع عليها.</li>
+      <li><b>منتهية</b> — احتُسبت نقاطها على حسابك.</li>
+    </ul>
+    <p style="margin-top:12px">اضغط على أي مباراة قادمة وحدّد توقّعك باستخدام الأزرار:</p>
+    <div class="mock">
+      <div class="mock-row">
+        <span>🇲🇦 المغرب</span>
+        <span class="stepper"><span class="btn">−</span>2<span class="btn">+</span></span>
+      </div>
+      <div class="mock-row">
+        <span>🇫🇷 فرنسا</span>
+        <span class="stepper"><span class="btn">−</span>1<span class="btn">+</span></span>
+      </div>
+      <div class="mock-row"><span>من سيتأهّل؟</span><span class="pill">🇲🇦 المغرب</span></div>
+    </div>
+    <p style="margin-top:12px"><b>تنبيه:</b> تُغلق التوقّعات تلقائيًا عند صافرة بداية المباراة. خصِّص توقّعك مبكرًا.</p>
+  </div>
+
+  <!-- 4. Scoring -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">4</div>
+      <div class="icon">🎯</div>
+      <h2>كيف تُحتسب النقاط</h2>
+    </div>
+    <ul>
+      <li><b>نتيجة دقيقة</b> (مثال ٢-١ توقّعت ٢-١): <span class="pill">٥ نقاط</span></li>
+      <li><b>فائز صحيح + فارق أهداف صحيح</b>: <span class="pill">٥ نقاط</span> (٣ + ٢)</li>
+      <li><b>الفائز / التعادل الصحيح فقط</b>: <span class="pill">٣ نقاط</span></li>
+      <li><b>اختيار الفريق المتأهّل في الإقصاء</b>: <span class="pill">+٣ إضافية</span></li>
+    </ul>
+    <p style="margin-top:10px">تتحدّث نقاطك تلقائيًا بعد انتهاء المباراة واحتساب نتيجتها.</p>
+  </div>
+
+  <!-- 5. Leaderboard -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">5</div>
+      <div class="icon">🏅</div>
+      <h2>الترتيب العام</h2>
+    </div>
+    <p>شاهد ترتيب جميع الكشّافة من الأكثر نقاطًا إلى الأقل. أصحاب المراكز الثلاثة الأولى يحصلون على منصّة شرفية.</p>
+    <div class="podium">
+      <div class="pod silver">🥈<br/>الثاني</div>
+      <div class="pod gold">🥇<br/>الأول</div>
+      <div class="pod bronze">🥉<br/>الثالث</div>
+    </div>
+    <p style="margin-top:12px">يتم تمييز صفّك بالذهبي حتى تجده بسهولة في القائمة.</p>
+  </div>
+
+  <!-- 6. Chat -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">6</div>
+      <div class="icon">💬</div>
+      <h2>الدردشة المجتمعية</h2>
+    </div>
+    <p>كل الكشّافة يشاركون في مجتمع واحد بعد كل مباراة:</p>
+    <ul>
+      <li>اكتب منشورًا قصيرًا (حتى ٢٨٠ حرفًا) عن أي مباراة أو رأيك في النتائج.</li>
+      <li>اربط منشورك بمباراة لربط النقاش بها.</li>
+      <li>تفاعل مع منشورات الآخرين برمز تعبيري واحد.</li>
+      <li>علّق ضمن المنشور للنقاش الموسّع.</li>
+    </ul>
+    <div class="mock">
+      <div style="font-weight:800; color: var(--gold-500);">@scout01</div>
+      <div style="margin: 6px 0 10px; color: rgba(246,239,225,0.92);">توقّعت ٢-١ بالضبط 🎯 المغرب رهيب!</div>
+      <div class="reactions">
+        <span class="reaction active">🔥 ٤</span>
+        <span class="reaction">⚽ ٢</span>
+        <span class="reaction">😂 ١</span>
+        <span class="reaction">👏</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Profile -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">7</div>
+      <div class="icon">👤</div>
+      <h2>ملفّك الشخصي</h2>
+    </div>
+    <ul>
+      <li>راجع جميع توقّعاتك السابقة ونتائجها.</li>
+      <li>إحصائياتك: عدد التوقّعات، التامّة، الصحيحة، إجمالي النقاط.</li>
+      <li>غيّر اللغة بين العربية والإنجليزية من زرّ 🌐.</li>
+      <li>سجّل الخروج من حسابك في أي وقت.</li>
+    </ul>
+  </div>
+
+  <!-- Flow recap -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">8</div>
+      <div class="icon">🔁</div>
+      <h2>الرحلة من البداية إلى النهاية</h2>
+    </div>
+    <div class="flow">
+      <div class="flow-step"><span class="e">📝</span>أنشئ حسابك</div>
+      <div class="flow-step"><span class="e">⚽</span>توقّع المباريات</div>
+      <div class="flow-step"><span class="e">🏆</span>اربح النقاط</div>
+      <div class="flow-step"><span class="e">📈</span>راقب ترتيبك</div>
+      <div class="flow-step"><span class="e">💬</span>شارك المجتمع</div>
+      <div class="flow-step"><span class="e">🥇</span>كن البطل</div>
+    </div>
+  </div>
+
+  <div class="closing">
+    كن مستعدًّا… لخدمة العالم ⚜️<br/>
+    حظًا موفّقًا في كأس العالم 2026
+  </div>
+
+  <div class="footer">
+    © 2026 · <a href="https://devultra.net">DEVULTRA</a><br/>
+    كل الحقوق محفوظة
+  </div>
+
+</div>
+</body>
+</html>
