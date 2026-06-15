@@ -42,9 +42,9 @@ export function ScoringWindowForm({ initialStart, initialEnd }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const j = await res.json().catch(() => ({}));
+      const j = (await res.json().catch(() => ({}))) as { error?: string; detail?: string };
       if (!res.ok) {
-        setErr(j.error ?? 'error');
+        setErr(j.detail ? `${j.error ?? 'error'}: ${j.detail}` : j.error ?? 'error');
         return;
       }
       setMsg('saved');
@@ -68,9 +68,10 @@ export function ScoringWindowForm({ initialStart, initialEnd }: Props) {
         scoring_starts_at?: string;
         scoring_ends_at?: string | null;
         error?: string;
+        detail?: string;
       };
       if (!res.ok) {
-        setErr(j.error ?? 'error');
+        setErr(j.detail ? `${j.error ?? 'error'}: ${j.detail}` : j.error ?? 'error');
         return;
       }
       if (j.scoring_starts_at) setStart(isoToLocalInput(j.scoring_starts_at));
