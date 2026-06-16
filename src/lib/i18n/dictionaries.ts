@@ -26,10 +26,7 @@ type Dict = {
     upcoming: string; done: string;
     tbd: string; teamsAnnouncedLater: string;
   };
-  leaderboard: {
-    title: string; empty: string; pts: string; first: string; second: string; third: string;
-    from: string; to: string; clear: string; rangeHint: string;
-  };
+  leaderboard: { title: string; empty: string; pts: string; first: string; second: string; third: string };
   profile: { title: string; group: string; points: string; myPredictions: string; changeLanguage: string };
   predictions: {
     title: string; empty: string; pending: string; points: string;
@@ -177,10 +174,6 @@ const en: Dict = {
       first: '1st',
       second: '2nd',
       third: '3rd',
-      from: 'From',
-      to: 'To',
-      clear: 'Clear',
-      rangeHint: 'Showing points from matches scored in this range',
     },
     profile: {
       title: 'Profile',
@@ -361,10 +354,6 @@ const ar: Dict = {
       first: 'الأول',
       second: 'الثاني',
       third: 'الثالث',
-      from: 'من',
-      to: 'إلى',
-      clear: 'إلغاء',
-      rangeHint: 'يتم عرض النقاط من المباريات المحتسبة ضمن هذه الفترة',
     },
     profile: {
       title: 'حسابي',

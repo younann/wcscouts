@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getT } from '@/lib/i18n/server';
 import { ScoringForm } from './ScoringForm';
 import { ScoringWindowForm } from './ScoringWindowForm';
+import { LeaderboardWindowForm } from './LeaderboardWindowForm';
 import type { ScoringRule } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
@@ -21,7 +22,7 @@ export default async function ScoringPage() {
   const { data: settingsData } = await supabase
     .from('app_settings')
     .select('key, value')
-    .in('key', ['scoring_starts_at', 'scoring_ends_at']);
+    .in('key', ['scoring_starts_at', 'scoring_ends_at', 'leaderboard_from', 'leaderboard_to']);
   const settings = Object.fromEntries(
     ((settingsData ?? []) as SettingRow[]).map((r) => [r.key, r.value])
   ) as Record<string, string | null>;
@@ -37,6 +38,11 @@ export default async function ScoringPage() {
       <ScoringWindowForm
         initialStart={settings.scoring_starts_at ?? null}
         initialEnd={settings.scoring_ends_at ?? null}
+      />
+
+      <LeaderboardWindowForm
+        initialFrom={settings.leaderboard_from ?? null}
+        initialTo={settings.leaderboard_to ?? null}
       />
     </main>
   );

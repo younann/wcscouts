@@ -1,11 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { getT } from '@/lib/i18n/server';
 import { Podium } from '@/components/Podium';
-import { LeaderboardDateFilter } from '@/components/LeaderboardDateFilter';
 import { Crown, Medal, Award } from 'lucide-react';
 import type { LeaderboardEntry } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
+
+interface SettingRow {
+  key: string;
+  value: string | null;
+}
 
 function PositionBadge({ pos }: { pos: number }) {
   if (pos === 1) return <Crown className="h-5 w-5 text-gold-300" />;
@@ -14,29 +18,21 @@ function PositionBadge({ pos }: { pos: number }) {
   return <span className="font-black text-cream/40 w-5 text-center">{pos}</span>;
 }
 
-// "YYYY-MM-DD" → ISO at the start or end of that calendar day in UTC. Using
-// UTC keeps the boundary deterministic across server/client timezones; finer
-// time-of-day filtering can come later if a user asks for it.
-function dayStartIso(day: string): string | null {
-  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? `${day}T00:00:00.000Z` : null;
-}
-function dayEndIso(day: string): string | null {
-  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? `${day}T23:59:59.999Z` : null;
-}
-
-export default async function LeaderboardPage({
-  searchParams,
-}: { searchParams: Promise<{ from?: string; to?: string }> }) {
+export default async function LeaderboardPage() {
   const { t } = await getT();
-  const { from: fromRaw, to: toRaw } = await searchParams;
-  const from = fromRaw ?? '';
-  const to = toRaw ?? '';
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const fromIso = from ? dayStartIso(from) : null;
-  const toIso = to ? dayEndIso(to) : null;
+  const { data: settingsData } = await supabase
+    .from('app_settings')
+    .select('key, value')
+    .in('key', ['leaderboard_from', 'leaderboard_to']);
+  const settings = Object.fromEntries(
+    ((settingsData ?? []) as SettingRow[]).map((r) => [r.key, r.value])
+  ) as Record<string, string | null>;
+  const fromIso = settings.leaderboard_from ?? null;
+  const toIso = settings.leaderboard_to ?? null;
   const ranged = Boolean(fromIso || toIso);
 
   let board: LeaderboardEntry[] = [];
@@ -63,17 +59,6 @@ export default async function LeaderboardPage({
         <Crown className="h-6 w-6 text-gold-300" />
         {t.leaderboard.title}
       </h1>
-
-      <LeaderboardDateFilter
-        initialFrom={from}
-        initialTo={to}
-        labels={{
-          from: t.leaderboard.from,
-          to: t.leaderboard.to,
-          clear: t.leaderboard.clear,
-          rangeHint: t.leaderboard.rangeHint,
-        }}
-      />
 
       {board.length === 0 ? (
         <div className="card-royal text-center text-cream/60">{t.leaderboard.empty}</div>
