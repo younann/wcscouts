@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { getT } from '@/lib/i18n/server';
 import { Podium } from '@/components/Podium';
+import { LeaderboardDateFilter } from '@/components/LeaderboardDateFilter';
 import { Crown, Medal, Award } from 'lucide-react';
 import type { LeaderboardEntry } from '@/types/database';
 
@@ -13,17 +14,46 @@ function PositionBadge({ pos }: { pos: number }) {
   return <span className="font-black text-cream/40 w-5 text-center">{pos}</span>;
 }
 
-export default async function LeaderboardPage() {
+// "YYYY-MM-DD" → ISO at the start or end of that calendar day in UTC. Using
+// UTC keeps the boundary deterministic across server/client timezones; finer
+// time-of-day filtering can come later if a user asks for it.
+function dayStartIso(day: string): string | null {
+  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? `${day}T00:00:00.000Z` : null;
+}
+function dayEndIso(day: string): string | null {
+  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? `${day}T23:59:59.999Z` : null;
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: { searchParams: Promise<{ from?: string; to?: string }> }) {
   const { t } = await getT();
+  const { from: fromRaw, to: toRaw } = await searchParams;
+  const from = fromRaw ?? '';
+  const to = toRaw ?? '';
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data } = await supabase
-    .from('leaderboard')
-    .select('*')
-    .order('position', { ascending: true })
-    .limit(200);
-  const board = (data ?? []) as LeaderboardEntry[];
+
+  const fromIso = from ? dayStartIso(from) : null;
+  const toIso = to ? dayEndIso(to) : null;
+  const ranged = Boolean(fromIso || toIso);
+
+  let board: LeaderboardEntry[] = [];
+  if (ranged) {
+    const { data } = await supabase.rpc('leaderboard_in_range', {
+      p_from: fromIso,
+      p_to: toIso,
+    });
+    board = (data ?? []) as LeaderboardEntry[];
+  } else {
+    const { data } = await supabase
+      .from('leaderboard')
+      .select('*')
+      .order('position', { ascending: true })
+      .limit(200);
+    board = (data ?? []) as LeaderboardEntry[];
+  }
   const top3 = board.filter((e) => e.position <= 3);
   const rest = board.filter((e) => e.position > 3);
 
@@ -33,6 +63,17 @@ export default async function LeaderboardPage() {
         <Crown className="h-6 w-6 text-gold-300" />
         {t.leaderboard.title}
       </h1>
+
+      <LeaderboardDateFilter
+        initialFrom={from}
+        initialTo={to}
+        labels={{
+          from: t.leaderboard.from,
+          to: t.leaderboard.to,
+          clear: t.leaderboard.clear,
+          rangeHint: t.leaderboard.rangeHint,
+        }}
+      />
 
       {board.length === 0 ? (
         <div className="card-royal text-center text-cream/60">{t.leaderboard.empty}</div>
