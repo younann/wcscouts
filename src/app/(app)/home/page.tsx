@@ -24,12 +24,38 @@ export default async function HomePage() {
     .single();
   const profile = profileRow as Profile | null;
 
-  const { data: rankRow } = await supabase
-    .from('leaderboard')
-    .select('position')
-    .eq('id', user.id)
-    .maybeSingle();
-  const rank = (rankRow as LeaderboardEntry | null)?.position ?? null;
+  const { data: windowSettings } = await supabase
+    .from('app_settings')
+    .select('key, value')
+    .in('key', ['leaderboard_from', 'leaderboard_to']);
+  const windowMap = Object.fromEntries(
+    ((windowSettings ?? []) as { key: string; value: string | null }[]).map((r) => [r.key, r.value])
+  ) as Record<string, string | null>;
+  const fromIso = windowMap.leaderboard_from ?? null;
+  const toIso = windowMap.leaderboard_to ?? null;
+  const ranged = Boolean(fromIso || toIso);
+
+  let rank: number | null = null;
+  let displayPoints: number = profile?.total_points ?? 0;
+  if (ranged) {
+    const { data: boardRows } = await supabase.rpc('leaderboard_in_range', {
+      p_from: fromIso,
+      p_to: toIso,
+    });
+    const board = (boardRows ?? []) as LeaderboardEntry[];
+    const mine = board.find((e) => e.id === user.id);
+    if (mine) {
+      rank = mine.position;
+      displayPoints = mine.total_points;
+    }
+  } else {
+    const { data: rankRow } = await supabase
+      .from('leaderboard')
+      .select('position')
+      .eq('id', user.id)
+      .maybeSingle();
+    rank = (rankRow as LeaderboardEntry | null)?.position ?? null;
+  }
 
   const [{ data: upcomingRaw }, { data: recentRaw }] = await Promise.all([
     supabase
@@ -110,7 +136,7 @@ export default async function HomePage() {
               <Target className="h-4 w-4 text-gold-300" /> {t.home.yourPoints}
             </div>
             <div className="text-3xl font-black gold-text mt-1 tabular-nums">
-              {profile?.total_points ?? 0}
+              {displayPoints}
             </div>
           </div>
           <div
