@@ -31,7 +31,9 @@ Surface the feed in four places. None require touching prediction data; one addi
 - Each card is **reactable inline** (reuses the existing `ReactionBar` client component and `POST /api/posts/[id]/reactions` route).
 - Tapping anywhere else on the card → navigates to `/feed`.
 - Header row: "Latest from the chat" + "See all" link → `/feed`.
-- If 0 posts exist, the section is hidden entirely.
+- **Empty state:** if 0 posts exist, the entire section (header included) is hidden.
+
+**Reaction-on-teaser scope:** the optimistic update lives entirely inside `FeedTeaser` state. It does not pre-populate the `/feed` route; the user will see the same state once they navigate (it's read from the same `post_reactions` table). No cross-component cache wiring required.
 
 **Data:** server-side fetch in `home/page.tsx`, identical query shape to feed page (reuses `enrichPosts` from `app/api/posts/_shared.ts`) but limited to 2.
 
@@ -46,11 +48,15 @@ Surface the feed in four places. None require touching prediction data; one addi
   - Match is auto-tagged — `MatchTagPicker` not rendered.
   - Submits to existing `POST /api/posts` with `body` + `match_id`.
 - Posts list below: filtered by `match_id = this match`, ordered `created_at DESC`, initial limit 5.
-- "Load more" inline button paginates from the same endpoint with `before` cursor (same pattern as the main feed).
-- Each post supports the full set of feed interactions (reactions, comments) by reusing `PostCard`.
+- "Load more" inline button paginates with `before` cursor (same pattern as the main feed).
+- Each post reuses `PostCard` for the full set of feed interactions (reactions, comments).
 - Empty state copy: "Be the first to talk about this match" / «كن أول من يتحدث عن هذه المباراة».
 
-**Data:** new server-side fetch in match detail page, calling `enrichPosts` filtered by `match_id`. A new client component `MatchThread.tsx` wraps the composer and list to keep optimistic UI logic local.
+**API change required:** `GET /api/posts` does not currently support filtering by `match_id`. Add an optional `match_id` query param (`src/app/api/posts/route.ts`): if present and numeric, append `.eq('match_id', n)` to the select. No schema change; no impact on existing callers.
+
+**Component scope:** `MatchThread.tsx` is a NEW client component that does **not** reuse the existing `Composer.tsx` (which manages its own `MatchTagPicker` state). It uses its own minimal textarea/Post-button UI with the match id baked in. Initial posts and `next_cursor` are passed from the server-rendered page; subsequent "Load more" calls hit `GET /api/posts?match_id={id}&before={cursor}`.
+
+**Data:** server-side fetch in match detail page, calling `enrichPosts` filtered by `match_id`. The same query also computes `next_cursor` server-side to seed pagination.
 
 ### 3. Bottom-nav unread dot
 
@@ -68,6 +74,8 @@ alter table public.profiles
   add column if not exists feed_last_seen_at timestamptz not null default now();
 ```
 
+Existing profile rows are populated with `now()` at deploy time, so existing users do **not** see a dot immediately after deploy. New posts authored after deploy trigger dots normally.
+
 **Read side:**
 - `(app)/layout.tsx` issues one server query alongside existing layout work:
   ```sql
@@ -78,32 +86,40 @@ alter table public.profiles
     limit 1
   );
   ```
-- Result is a single boolean — cheap (uses existing `posts.created_at` indexable order).
+- Result is a single boolean — cheap (uses existing `posts(created_at desc)` index from migration 011).
 - Passed to `BottomNav` as a prop.
+- The `(app)` route group is auth-gated, so the user id is always set; this query does not run for `/login`, `/signup`, or `/`.
 
 **Write side:**
 - `(app)/feed/page.tsx` does a server-side `update profiles set feed_last_seen_at = now() where id = $me` on every visit, before fetching posts. This is idempotent and only writes one row.
+- The existing `profiles_update_self` RLS policy permits this — its `with check` requires `auth.uid() = id` and unchanged `role`; we only set `feed_last_seen_at` so `role` is preserved. No new policy needed.
+- The match thread does **not** update `feed_last_seen_at`; the dot specifically signals "unseen activity in the main feed". Users who read only match threads will still see a dot, which is intentional (drives them to the feed once).
 
 **Tradeoffs:**
-- Layout query runs on every app page. The query is a single boolean lookup with one index hit — acceptable cost. If observed slowness, we can switch to a single per-session cookie check later.
+- Layout query runs on every app page render. Single boolean lookup with index hit — acceptable for current scale (hundreds of users, one tournament). If slow later, switch to a per-session cookie check.
+- **Race on first `/feed` visit:** layout and feed page queries run concurrently; the layout may read `feed_last_seen_at` before the update commits, leaving the dot visible for one render. The next navigation clears it. Acceptable cosmetic delay.
 
 ### 4. Post-prediction "Share my pick" CTA
 
-**Where:** `src/components/PredictionForm.tsx`, conditionally rendered below the save button after a successful save.
+**Where:** `src/components/PredictionForm.tsx`, conditionally rendered below the save button after a successful save in the current session.
 
 **What:**
-- After save success, if the user has no existing `posts` row with `match_id = this match` AND `user_id = me`, render an inline panel:
-  - Pre-filled body (locale-aware template):
-    - EN: `Predicted {home_flag} {home_score}–{away_score} {away_flag} — let's go!`
-    - AR: `توقّعت {home_flag} {home_score}–{away_score} {away_flag} — يلا!`
-  - Editable textarea showing the body.
-  - Two buttons: **Share** (posts) and **Not now** (dismisses for this session).
-- Tapping Share calls `POST /api/posts` with the body and `match_id`.
-- After success, the CTA hides and a small confirmation chip appears.
-- "Show once per match per user" is enforced by the existence check; no extra state stored.
+- The match detail page passes a new prop `hasSharedPick: boolean` to `PredictionForm`. The prop is **optional** with default `false` so the existing single caller pattern is preserved (there is currently only one caller — `src/app/(app)/matches/[id]/page.tsx:94`).
+- `PredictionForm` tracks a local `justSaved: boolean` (set to `true` after the `submit()` success branch). The CTA shows when `justSaved && !hasSharedPick && !dismissed`.
+- `hasSharedPick` is server-truth at page-load time; `justSaved` is client-truth for the active session. The combination prevents both stale CTAs and "already shared" CTAs from showing.
+- Pre-filled body (locale-aware template), placeholder keys consistent throughout:
+  - EN: `Predicted {home_flag} {home_score}–{away_score} {away_flag} — let's go!`
+  - AR: `توقّعت {home_flag} {home_score}–{away_score} {away_flag} — يلا!`
+- Editable textarea showing the body.
+- Two buttons: **Share** (posts) and **Not now** (dismisses).
+- Tapping Share calls `POST /api/posts` with the body and `match_id`. On success, the CTA hides and a small confirmation chip appears.
+- **"Not now" persistence:** dismissal is stored in `localStorage` under key `wc_share_dismissed_{matchId}` so reloads do not re-prompt. (Session-only state would look like a bug after a refresh.)
+- **Edge case:** if a user deletes their own share post and then re-saves the prediction, the CTA will reappear on next page load — `hasSharedPick` re-flips to `false`. Acceptable.
 
 **Data:**
 - The existence check happens server-side on the match detail page load (already loads predictions); we add a single `select count(*) from posts where user_id = me and match_id = m.id` and pass `hasSharedPick: boolean` down to `PredictionForm`.
+
+**Rate-limit interaction:** `POST /api/posts` enforces `MAX_POSTS_PER_HOUR = 10` per user. A user predicting many matches in an hour and sharing each will hit the limit. The CTA surfaces the existing `t.feed.rateLimited` error inline and keeps the editable body so the user can retry later — no spec change to rate-limit policy.
 
 ## Data model
 
@@ -119,11 +135,12 @@ RLS on `profiles` already allows users to update their own row; no policy change
 
 ## API
 
-All existing endpoints. No new routes.
+No new routes. One minor change to one existing route.
 
-- `POST /api/posts` — used by match thread composer and share CTA (already supports `match_id`).
-- `POST /api/posts/[id]/reactions` — used by home teaser inline reactions (already exists).
-- `GET` reads use Supabase client directly from server components (current pattern).
+- `GET /api/posts` — **add optional `match_id` query param.** When present and numeric, append `.eq('match_id', n)` to the select. Required so `MatchThread` can paginate "load more" filtered by match. No impact on existing callers (param is optional).
+- `POST /api/posts` — unchanged. Used by match thread composer and share CTA (already supports `match_id`).
+- `POST /api/posts/[id]/reactions` — unchanged. Used by home teaser inline reactions.
+- `GET` reads from home/match detail/feed pages use the Supabase client directly from server components (current pattern).
 
 ## i18n
 
@@ -155,7 +172,8 @@ feed: {
 - `src/app/(app)/feed/page.tsx` — `update profiles set feed_last_seen_at = now()` on visit.
 - `src/app/(app)/layout.tsx` — fetch unread boolean, pass to `BottomNav`.
 - `src/components/BottomNav.tsx` — accept `unreadFeed: boolean` prop; render red dot on Chat tab icon.
-- `src/components/PredictionForm.tsx` — accept `hasSharedPick: boolean`; render `SharePickCTA` after successful save when `!hasSharedPick`.
+- `src/components/PredictionForm.tsx` — accept optional `hasSharedPick?: boolean` (default `false`); track local `justSaved` state; render `SharePickCTA` when `justSaved && !hasSharedPick && !dismissed`.
+- `src/app/api/posts/route.ts` — `GET` accepts optional `match_id` query param.
 - `src/lib/i18n/dictionaries.ts` — add new feed keys (en + ar).
 
 ## Data flow per surface
