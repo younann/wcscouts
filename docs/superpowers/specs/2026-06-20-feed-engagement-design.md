@@ -155,7 +155,7 @@ feed: {
   sharePickTitle: 'Share with the scouts?' / 'شارك مع الكشّافة؟',
   sharePickShare: 'Share' / 'شارك',
   sharePickNotNow: 'Not now' / 'ليس الآن',
-  sharePickTemplate: "Predicted {home} {hs}–{as} {away} — let's go!" / 'توقّعت {home} {hs}–{as} {away} — يلا!',
+  sharePickTemplate: "Predicted {home_flag} {home_score}–{away_score} {away_flag} — let's go!" / 'توقّعت {home_flag} {home_score}–{away_score} {away_flag} — يلا!',
 }
 ```
 

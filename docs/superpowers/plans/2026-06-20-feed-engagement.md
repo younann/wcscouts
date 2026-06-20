@@ -44,6 +44,24 @@
 
 These three tasks are prerequisites for the UI tasks. They are small and low-risk individually.
 
+### Task 0: Capture baseline prediction counts (REQUIRED)
+
+This is not a code change — it's a safety check. The user has explicitly stated that prediction data must not be lost. Capture the baseline now so Task 13 can verify nothing was destroyed.
+
+- [ ] **Step 1: Run baseline counts and record them**
+
+In Supabase SQL editor or `psql`, run:
+
+```sql
+select count(*) as total from public.predictions;
+select count(*) as scored from public.predictions where points_awarded is not null;
+select sum(total_points)::int as sum_points from public.profiles where role = 'user';
+```
+
+Write the three numbers down (in the plan, in a scratch file, or in the chat). Task 13 compares these three numbers against post-implementation counts.
+
+---
+
 ### Task 1: Migration — add `feed_last_seen_at` to profiles
 
 **Files:**
@@ -73,11 +91,21 @@ Read the file back and confirm:
 - `if not exists` guards the add so re-runs are safe
 - The default is `now()`, not epoch
 
-- [ ] **Step 3: Apply against your local Supabase**
+- [ ] **Step 3: Apply against your local Supabase first**
 
-How you apply is environment-specific (Supabase CLI, dashboard SQL editor, or `psql`). The plan does not run this for you — just confirm via `select column_name, data_type, is_nullable, column_default from information_schema.columns where table_schema = 'public' and table_name = 'profiles' and column_name = 'feed_last_seen_at';` that the column exists and matches.
+How you apply is environment-specific (Supabase CLI, dashboard SQL editor, or `psql`). Apply against a local or staging environment FIRST. Confirm with:
 
-If applying against production: take a backup of `profiles` first (`pg_dump -t public.profiles ...`) and confirm with the user before running.
+```sql
+select column_name, data_type, is_nullable, column_default
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'profiles'
+  and column_name = 'feed_last_seen_at';
+```
+
+Expected: one row, `timestamptz`, `NO` (not nullable), default `now()`.
+
+If applying against production: take a backup of `profiles` first (`pg_dump -t public.profiles ...`), apply against a copy of the dump to confirm zero errors, then confirm with the user before running on prod.
 
 - [ ] **Step 4: Commit**
 
@@ -121,23 +149,27 @@ if (matchIdRaw != null) {
 }
 ```
 
-Then append `.eq('match_id', matchIdFilter)` to `q` conditionally, placed after `.limit(limit)` is removed (you must apply `.eq` before `.limit` — Supabase JS chains filter before pagination). The minimal edit:
+Then add the conditional `.eq` filter to the existing `q` chain. The existing code is:
 
 ```ts
 let q = supabase
   .from('posts')
   .select('id, user_id, body, match_id, created_at')
   .order('created_at', { ascending: false })
-  .order('id', { ascending: false });
+  .order('id', { ascending: false })
+  .limit(limit);
 
-if (matchIdFilter != null) q = q.eq('match_id', matchIdFilter);
 if (before) q = q.lt('created_at', before);
 if (after) q = q.gt('created_at', after);
-
-q = q.limit(limit);
 ```
 
-Note: Supabase JS allows chained filters in any order before `.then()` is awaited; the existing code already does `.limit(limit)` before `if (before)` adds `.lt`. We're restructuring so `.limit()` is last for clarity.
+Add a single line for the new filter — order does not matter relative to the other `q = q.X(...)` reassignments:
+
+```ts
+if (matchIdFilter != null) q = q.eq('match_id', matchIdFilter);
+```
+
+Place it anywhere in that `if (before) … if (after) …` block. Do NOT restructure the existing filter chain.
 
 - [ ] **Step 3: Typecheck and lint**
 
@@ -261,24 +293,29 @@ interface Props {
 }
 ```
 
-Update the component signature to destructure it. Inside the `Link` for the `feed` item (key === 'feed'), render a small red dot when `unreadFeed` is true. Pattern:
+Update the component signature to destructure it. The existing JSX structure is `<nav><div><ul><li><Link>...</Link></li>...</ul></div></nav>`. **Preserve that structure.** Only modify the body of the existing `<Link>` element (the children inside, not the `<Link>` itself, not the wrapping `<li>`):
 
+Before (inside `<Link>`):
 ```tsx
-<Link href={href} className={cn(/* ... */)}>
-  <span className="relative">
-    <Icon className={cn('h-6 w-6', active && 'drop-shadow-[0_0_8px_rgba(252,192,40,0.6)]')} />
-    {key === 'feed' && unreadFeed && (
-      <span
-        aria-hidden
-        className="absolute -top-0.5 -end-0.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-royal-950"
-      />
-    )}
-  </span>
-  <span className="text-[11px] font-semibold">{labels[key]}</span>
-</Link>
+<Icon className={cn('h-6 w-6', active && 'drop-shadow-[0_0_8px_rgba(252,192,40,0.6)]')} />
+<span className="text-[11px] font-semibold">{labels[key]}</span>
 ```
 
-Use `end-0.5` (logical CSS) so the dot mirrors correctly under RTL.
+After:
+```tsx
+<span className="relative">
+  <Icon className={cn('h-6 w-6', active && 'drop-shadow-[0_0_8px_rgba(252,192,40,0.6)]')} />
+  {key === 'feed' && unreadFeed && (
+    <span
+      aria-hidden
+      className="absolute -top-0.5 -end-0.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-royal-950"
+    />
+  )}
+</span>
+<span className="text-[11px] font-semibold">{labels[key]}</span>
+```
+
+Use `end-0.5` (logical CSS) so the dot mirrors correctly under RTL. Tailwind 3.4 generates `right-0.5` or `left-0.5` based on the document's `dir` attribute — the existing app sets `dir="rtl"` on `<html>` for Arabic via `src/app/layout.tsx`, so this works.
 
 - [ ] **Step 2: Fetch the unread boolean in the app layout**
 
@@ -340,6 +377,8 @@ With dev server running:
 2. Sign in as user B in a private/incognito window. Go to `/feed` and post any short message.
 3. Back in user A's window, navigate to any page (e.g., `/home`). Expected: a small red dot appears on the Chat tab.
 4. As user A, also post a message. Reload `/home`. Confirm own posts do NOT create a dot.
+5. **Default-correctness check (catches a broken migration default):** while existing posts from A and B are in the DB, sign up a brand-new user C via `/signup`. Without visiting `/feed`, navigate to `/home`. Expected: NO dot — C's `feed_last_seen_at` was set to `now()` at signup, so older posts don't count. Then have A post once; reload `/home` as C. Expected: dot now appears. (If the migration default were broken, step 4 would still pass but this step would fail.)
+6. Switch user A's locale to Arabic. The dot should appear at the upper-left of the Chat icon (logical `end` flips under RTL).
 
 - [ ] **Step 5: Commit**
 
@@ -365,14 +404,26 @@ EOF
 
 - [ ] **Step 1: Add the update before the existing query**
 
-In `src/app/(app)/feed/page.tsx`, right after the `if (!user) return null;` guard, before the `getUser()` re-call or any data fetch, insert:
+In `src/app/(app)/feed/page.tsx`, the current code does (lines 14–17):
 
 ```ts
-await supabase
-  .from('profiles')
-  .update({ feed_last_seen_at: new Date().toISOString() })
-  .eq('id', user.id);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data: { user: authUser } } = await supabase.auth.getUser();
 ```
+
+Insert the update on a new line between `if (!user) return null;` and the redundant `getUser()` re-call (i.e., between the current lines 15 and 17):
+
+```ts
+  await supabase
+    .from('profiles')
+    .update({ feed_last_seen_at: new Date().toISOString() })
+    .eq('id', user.id);
+```
+
+Do **not** remove the redundant `getUser()` re-call — that's a separate concern and out of scope for this task.
 
 This update is permitted by the existing `profiles_update_self` RLS policy (verified in spec). It does not alter `role` so the `with check` constraint holds.
 
@@ -891,7 +942,7 @@ At the very end of the `<main>` block, after the `{breakdown.length > 0 && ...}`
 3. Type a message in the composer and tap Post. The post appears immediately at the top of the thread with author, time, body, reactions row, comment toggle.
 4. React on the new post; expand comments; add a comment. All should work using the existing flows.
 5. From the feed page, post 6 messages tagged to the same match. Return to match detail; expected: 5 visible plus a "Load more" button. Tap it → next batch appears.
-6. Try posting 11+ times in a row to verify the rate-limit error chip renders (uses existing `t.feed.rateLimited`).
+6. **Rate-limit check (do this only on a fresh user):** the limit is 10 posts/hour per user and is shared across feed, match thread, and share CTA. If you've already posted during prior task verification, this test will be inconsistent. Use a fresh test account and post 11 times in a row; expected: the 11th request returns 429 and the inline error chip renders (uses existing `t.feed.rateLimited`).
 7. Switch locale to Arabic: title and empty-state copy localized.
 
 - [ ] **Step 5: Commit**
@@ -1017,8 +1068,14 @@ export function SharePickCTA({
     });
   }
 
+  // Wrapper is intentionally NOT `card-royal`. SharePickCTA renders INSIDE
+  // PredictionForm's `card-royal-elev` outer card. A nested card would
+  // create a card-in-a-card. Use a subtle bordered section instead.
   return (
-    <div className="card-royal flex flex-col gap-3">
+    <div
+      className="rounded-2xl p-3 flex flex-col gap-3 border-t border-gold-500/20"
+      style={{ background: 'rgba(28,7,67,0.45)' }}
+    >
       <div className="flex items-center justify-between">
         <div className="text-sm font-bold text-gold-300">{t.feed.sharePickTitle}</div>
         <button
@@ -1213,7 +1270,7 @@ to:
 3. Save again (update prediction). Expected: NO CTA — `hasSharedPick` is now true.
 4. Open a DIFFERENT match. Save a prediction. Tap "Not now". The CTA disappears.
 5. Reload the page → CTA does NOT come back (localStorage dismissal).
-6. Open that same match in a different browser/incognito as the same user → on save, CTA does not appear because `hasSharedPick` would be false but localStorage is per-device. Acceptable; document if asked.
+6. **Cross-device note (informational, not a failure):** the "Not now" dismissal is stored in localStorage, so it's per-device. If the same user opens the same match in a different browser, the CTA may re-appear if they haven't shared yet. This is intentional — no action needed.
 7. Switch locale to Arabic, redo step 1; verify the template renders RTL with Arabic copy.
 
 - [ ] **Step 5: Commit**
