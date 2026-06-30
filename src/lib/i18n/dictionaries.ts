@@ -26,6 +26,8 @@ type Dict = {
     upcoming: string; done: string;
     tbd: string; teamsAnnouncedLater: string;
   };
+  bracket: { title: string; viewBracket: string; thirdPlace: string; champion: string };
+  announce: { title: string; body: string; cta: string };
   leaderboard: { title: string; empty: string; pts: string; first: string; second: string; third: string };
   profile: { title: string; group: string; points: string; myPredictions: string; changeLanguage: string };
   predictions: {
@@ -166,6 +168,17 @@ const en: Dict = {
       done: 'Finished',
       tbd: 'TBD',
       teamsAnnouncedLater: 'Teams confirmed after the group stage',
+    },
+    bracket: {
+      title: 'Knockout bracket',
+      viewBracket: 'Bracket',
+      thirdPlace: 'Third place',
+      champion: 'Champion',
+    },
+    announce: {
+      title: 'Heads up!',
+      body: "Due to a technical issue, some Round-of-32 games couldn't be predicted. We've added +3 points for each missed game to everyone who took part. Thanks for your patience!",
+      cta: 'Got it!',
     },
     leaderboard: {
       title: 'Leaderboard',
@@ -346,6 +359,17 @@ const ar: Dict = {
       done: 'منتهية',
       tbd: 'يُحدَّد لاحقًا',
       teamsAnnouncedLater: 'تُحدَّد الفرق بعد دور المجموعات',
+    },
+    bracket: {
+      title: 'جدول الأدوار الإقصائية',
+      viewBracket: 'المخطّط',
+      thirdPlace: 'المركز الثالث',
+      champion: 'البطل',
+    },
+    announce: {
+      title: 'تنويه!',
+      body: 'بسبب مشكلة تقنية، تعذّر التوقّع في بعض مباريات دور الـ32. أضفنا +3 نقاط عن كل مباراة فاتتكم لكل من شارك. شكرًا لتفهّمكم!',
+      cta: 'حسنًا!',
     },
     leaderboard: {
       title: 'الترتيب',

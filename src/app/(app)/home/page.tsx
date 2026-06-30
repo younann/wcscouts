@@ -3,7 +3,7 @@ import { getT } from '@/lib/i18n/server';
 import { MatchCard } from '@/components/MatchCard';
 import { Confetti } from '@/components/Confetti';
 import { WorldCupTrophy } from '@/components/WorldCupTrophy';
-import { Trophy, Target, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Trophy, Target, ChevronRight, ChevronLeft, GitFork } from 'lucide-react';
 import Link from 'next/link';
 import { isRTL } from '@/lib/i18n/dictionaries';
 import type { LeaderboardEntry, MatchWithTeams, Prediction, Profile, Team } from '@/types/database';
@@ -155,6 +155,15 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <Link
+        href="/bracket"
+        className="card-royal flex items-center justify-center gap-2 font-bold text-gold-200 hover:border-gold-400/50 transition"
+      >
+        <GitFork className="h-5 w-5 -rotate-90" />
+        {t.bracket.title}
+        <Chevron className="h-4 w-4" />
+      </Link>
 
       {enrichedRecent.length > 0 && (
         <section className="flex flex-col gap-3">

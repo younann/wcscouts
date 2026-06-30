@@ -206,3 +206,76 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
   10% { opacity: 1; }
   100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
 }
+
+/* ===== Knockout bracket ===== */
+.bkt-scroll {
+  --bkt-box-w: 132px;
+  --bkt-conn: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 2px 14px;
+}
+.bkt-inner { display: inline-block; min-width: 100%; }
+
+.bkt-headers { display: flex; margin-bottom: 6px; }
+.bkt-header {
+  flex: 0 0 auto;
+  width: var(--bkt-box-w);
+  margin-inline-end: calc(var(--bkt-conn) * 2);
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: rgba(253, 211, 76, 0.85);
+}
+.bkt-header:last-child { margin-inline-end: 0; }
+
+.bkt-node { display: flex; align-items: center; }
+.bkt-self { position: relative; flex: 0 0 auto; padding-inline-start: var(--bkt-conn); }
+.bkt-self::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  width: var(--bkt-conn);
+  border-top: 2px solid rgba(252, 192, 40, 0.30);
+}
+.bkt-self--leaf { padding-inline-start: 0; }
+.bkt-self--leaf::before { content: none; }
+
+.bkt-kids {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  flex: 0 0 auto;
+  padding-inline-end: var(--bkt-conn);
+}
+.bkt-kids::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: 0;
+  top: 25%;
+  bottom: 25%;
+  border-inline-end: 2px solid rgba(252, 192, 40, 0.30);
+}
+.bkt-kid { display: flex; align-items: center; position: relative; }
+.bkt-kid::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: calc(var(--bkt-conn) * -1);
+  top: 50%;
+  width: var(--bkt-conn);
+  border-top: 2px solid rgba(252, 192, 40, 0.30);
+}
+
+.bkt-box { width: var(--bkt-box-w); margin: 6px 0; }
+
+.bkt-third {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(252, 192, 40, 0.25);
+  width: var(--bkt-box-w);
+}

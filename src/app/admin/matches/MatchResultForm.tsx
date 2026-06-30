@@ -31,9 +31,17 @@ export function MatchResultForm({ matchId, isKO, allTeams, locale, initial, t }:
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
   const teamsKnown = homeTeam !== '' && awayTeam !== '';
+  // Knockout games need a qualifier before scoring: it both awards the
+  // "correct qualifier" bonus and tells the bracket who advances (the only way
+  // to resolve a penalty-shootout draw). Without it the next round won't fill.
+  const koNeedsQualifier = isKO && qual === '';
 
   function save(score: boolean) {
     setMsg(null);
+    if (score && koNeedsQualifier) {
+      setMsg('pick who advanced first');
+      return;
+    }
     start(async () => {
       const res = await fetch(`/api/admin/matches/${matchId}`, {
         method: 'POST',
@@ -136,12 +144,17 @@ export function MatchResultForm({ matchId, isKO, allTeams, locale, initial, t }:
         <button
           type="button"
           onClick={() => save(true)}
-          disabled={pending || home === '' || away === '' || !teamsKnown}
+          disabled={pending || home === '' || away === '' || !teamsKnown || koNeedsQualifier}
           className="btn-gold text-xs flex-1 disabled:opacity-40"
         >
           <Calculator className="h-3.5 w-3.5" /> {t.scoreMatch}
         </button>
       </div>
+      {koNeedsQualifier && home !== '' && away !== '' && teamsKnown && (
+        <div className="text-xs text-amber-300/90 font-semibold">
+          Pick who advanced ({t.qualifier}) to score this knockout match.
+        </div>
+      )}
       {msg && <div className="text-xs text-gold-300 font-semibold">{msg}</div>}
     </div>
   );

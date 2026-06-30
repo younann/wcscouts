@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { GitFork } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { getT } from '@/lib/i18n/server';
 import { MatchCard } from '@/components/MatchCard';
@@ -76,6 +78,14 @@ export default async function MatchesPage({
 
   return (
     <main className="px-5 pb-6 flex flex-col gap-4">
+      <Link
+        href="/bracket"
+        className="card-royal flex items-center justify-center gap-2 font-bold text-gold-200 hover:border-gold-400/50 transition"
+      >
+        <GitFork className="h-5 w-5 -rotate-90" />
+        {t.bracket.title}
+      </Link>
+
       <div className="flex gap-2">
         <TabBtn value="upcoming" label={t.match.upcoming} />
         <TabBtn value="live" label={t.match.live} />
